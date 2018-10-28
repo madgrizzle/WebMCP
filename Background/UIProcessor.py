@@ -20,7 +20,7 @@ class UIProcessor:
                 ):  # if there is new data to be read
                     message = self.app.data.ui_queue.get()
                     # send message to web for display in appropriate column
-                    print(message)
+                    #print(message)
                     if message != "":
                       if message[0:8] == "Message:":
                         if message.find("adjust Z-Axis") != -1:

@@ -25,12 +25,13 @@ class Actions(MakesmithInitFuncs):
 
     def startWebControl(self):
         try:
-            self.data.ui_queue.put("Start WebControl")
-            print("Start WebControl")
-            print(self.hosthome)
-            self.data.container = self.data.docker.containers.run(image="madgrizzle/webcontrol", ports={5000:5000}, volumes={self.hosthome+'/.WebControl':{'bind':'/root/.WebControl','mode':'rw'}}, privileged=True, detach=True)
-            self.data.ui_queue.put("Started WebControl: "+str(self.data.container.short_id))
-            print("Started WebControl:"+str(self.data.container.short_id))
+            if self.data.container == None:
+                self.data.ui_queue.put("Start WebControl")
+                print("Start WebControl")
+                print(self.hosthome)
+                self.data.container = self.data.docker.containers.run(image="madgrizzle/webcontrol", ports={5000:5000}, volumes={self.hosthome+'/.WebControl':{'bind':'/root/.WebControl','mode':'rw'}}, privileged=True, detach=True)
+                self.data.ui_queue.put("Started WebControl: "+str(self.data.container.short_id))
+                print("Started WebControl:"+str(self.data.container.short_id))
             return True
         except Exception as e:
             self.data.ui_queue.put(e)
