@@ -1,4 +1,5 @@
 from DataStructures.makesmithInitFuncs import MakesmithInitFuncs
+import docker
 
 class Actions(MakesmithInitFuncs):
     def processAction(self, msg):
@@ -15,6 +16,7 @@ class Actions(MakesmithInitFuncs):
     def startWebControl(self):
         try:
             print("Start WebControl")
+            self.data.docker.containers.run("-it -v $HOME/.WebControl:/root/.WebControl -p 5000:5000 --privileged madgrizzle/webcontrol")
             return True
         except Exception as e:
             print(e)

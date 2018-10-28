@@ -13,10 +13,12 @@ from flask_mobility.decorators import mobile_template
 from Background.UIProcessor import UIProcessor
 from DataStructures.data import Data
 from Controller.controller import Controller
+import docker
 from os import listdir
 from os.path import isfile, join
 
 app.data = Data()
+app.data.docker = docker.from_env()
 app.Controller = Controller()
 app.Controller.setUpData(app.data)
 app.UIProcessor = UIProcessor()
