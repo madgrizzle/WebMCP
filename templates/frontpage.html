@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block header %}
-
+<link rel="stylesheet" href="{{ url_for('static',filename='styles/frontpage.css') }}" crossorigin="anonymous">
 {% endblock %}
 
 {% block javascript %}
@@ -11,9 +11,25 @@
 
 {% block content %}
 <div class="container-fluid h-100">
-  <p id="#test">hello</p>
-  <button type="button" class="btn btn-secondary btn-block" onclick="action('startWebControl')">Start WebControl</button>
-  <button type="button" class="btn btn-secondary btn-block" onclick="action('stopWebControl')">Stop WebControl</button>
-  <button type="button" class="btn btn-secondary btn-block" onclick="action('updateWebControl')">Update WebControl</button>
+  <div class = "row">
+    <div class="col">
+      <div class = "row">
+        <div class="col">
+           <button id="clientStatus" class="btn btn-outline-danger my-2 my-sm-0" type="button">Not Connected</button>
+           <button id="webControlStatus" class="btn btn-outline-danger my-2 my-sm-0" type="button">Not Running</button>
+           <button id="webControlResponsivenessStatus" class="btn btn-outline-danger my-2 my-sm-0" type="button">Not Responsive</button>
+        </div>
+      </div>
+      <div class = "row">      
+        <button type="button" class="btn btn-secondary btn-block" onclick="action('startWebControl')">Start WebControl</button>
+        <button type="button" class="btn btn-secondary btn-block" onclick="action('stopWebControl')">Stop WebControl</button>
+        <button type="button" class="btn btn-secondary btn-block" onclick="action('updateWebControl')">Update WebControl</button>
+      </div>
+    </div>
+    <div class="col">
+       <div class="row" id='uiMessage'>
+       </div>
+    </div>
+  </div>
 </div>
 {% endblock %}

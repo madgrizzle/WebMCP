@@ -2,6 +2,7 @@ from DataStructures.makesmithInitFuncs import MakesmithInitFuncs
 from Actions.actions import Actions
 from DataStructures.logger import Logger
 from DataStructures.loggingQueue import LoggingQueue
+from Background.Watchdog import WatchDog
 from Config.config import Config
 import queue
 
@@ -16,6 +17,7 @@ class Controller(MakesmithInitFuncs):
     actions = Actions()
     logger = Logger()
     config = Config()
+    watchdog = WatchDog()
     ui_queue = queue.Queue()
     message_queue = LoggingQueue(logger)
 
@@ -36,7 +38,9 @@ class Controller(MakesmithInitFuncs):
         self.data.config = self.config
         self.data.ui_queue = self.ui_queue
         self.data.message_queue = self.message_queue
+        self.data.watchdog = self.watchdog
 
         self.actions.setUpData(data)
         self.logger.setUpData(data)
         self.config.setUpData(data)
+        self.watchdog.setUpData(data)

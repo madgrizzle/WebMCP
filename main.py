@@ -7,6 +7,7 @@ monkey.patch_all()
 import time
 import threading
 import json
+import schedule
 
 from flask import Flask, jsonify, render_template, current_app, request, flash
 from flask_mobility.decorators import mobile_template
@@ -24,6 +25,16 @@ app.Controller = Controller()
 app.Controller.setUpData(app.data)
 app.UIProcessor = UIProcessor()
 
+def run_schedule():
+    while 1:
+        schedule.run_pending()
+        time.sleep(1)
+
+app.th = threading.Thread(target=run_schedule)
+app.th.daemon = True
+app.th.start()
+
+
 @app.route("/")
 @mobile_template("{mobile/}")
 def index(template):
@@ -39,23 +50,28 @@ def index(template):
         return render_template("frontpage.html")
 
 
-@socketio.on("my event", namespace="/MaslowCNC")
+@socketio.on("my event", namespace="/WebMCP")
 def my_event(msg):
     print(msg["data"])
 
-@socketio.on("connect", namespace="/MaslowCNC")
+@socketio.on("connect", namespace="/WebMCP")
 def test_connect():
     print("connected")
     print(request.sid)
     socketio.emit("my response", {"data": "Connected", "count": 0})
 
-@socketio.on("disconnect", namespace="/MaslowCNC")
+@socketio.on("disconnect", namespace="/WebMCP")
 def test_disconnect():
     print("Client disconnected")
 
-@socketio.on("action", namespace="/MaslowCNC")
+@socketio.on("action", namespace="/WebMCP")
 def command(msg):
     app.data.actions.processAction(msg)
+
+@socketio.on("checkIn", namespace="/WebMCP")
+def checkIn():
+    print("received checkIn")
+    app.data.checkedIn = time.time()
 
 @socketio.on_error_default
 def default_error_handler(e):
