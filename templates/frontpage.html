@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block header %}
+
+{% endblock %}
+
+{% block javascript %}
+  <script src="{{ url_for('static',filename='scripts/feather.min.js') }}" crossorigin="anonymous"></script>
+  <script> feather.replace() </script>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid h-100">
+  <p id="#test">hello</p>
+  <button type="button" class="btn btn-secondary btn-block" onclick="action('startWebControl')">Start WebControl</button>
+  <button type="button" class="btn btn-secondary btn-block" onclick="action('stopWebControl')">Stop WebControl</button>
+  <button type="button" class="btn btn-secondary btn-block" onclick="action('updateWebControl')">Update WebControl</button>
+</div>
+{% endblock %}

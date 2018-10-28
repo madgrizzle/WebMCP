@@ -1,0 +1,13 @@
+{
+    "WebMCP Settings": [
+        {
+            "default": "",
+            "desc": "Select the COM port to connect to machine\ndefault setting: ",
+            "key": "COMport",
+            "section": "Maslow Settings",
+            "title": "Serial Connection",
+            "type": "string",
+            "value": "COM5"
+        }
+    ]
+}
