@@ -13,7 +13,6 @@ idna==2.7
 itsdangerous==0.24
 Jinja2==2.10
 MarkupSafe==1.0
-pypiwin32==219
 python-engineio==2.3.2
 python-socketio==2.0.0
 requests==2.20.0

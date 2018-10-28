@@ -19,6 +19,7 @@ from os.path import isfile, join
 
 app.data = Data()
 app.data.docker = docker.from_env()
+app.data.container = None
 app.Controller = Controller()
 app.Controller.setUpData(app.data)
 app.UIProcessor = UIProcessor()
@@ -65,5 +66,5 @@ def default_error_handler(e):
 if __name__ == "__main__":
     app.debug = False
     app.config["SECRET_KEY"] = "secret!"
-    socketio.run(app, use_reloader=False, host="0.0.0.0", port=80)
+    socketio.run(app, use_reloader=False, host="0.0.0.0", port=5001)
     # socketio.run(app, host='0.0.0.0')
