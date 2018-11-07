@@ -34,16 +34,13 @@ app.th = threading.Thread(target=run_schedule)
 app.th.daemon = True
 app.th.start()
 
+app.uithread = None
+
 
 @app.route("/")
 @mobile_template("{mobile/}")
 def index(template):
     # print template
-    current_app._get_current_object()
-    thread = socketio.start_background_task(
-        app.UIProcessor.start, current_app._get_current_object()
-    )
-    thread.start()
     if template == "mobile/":
         return render_template("frontpage_mobile.html")
     else:
@@ -58,6 +55,12 @@ def my_event(msg):
 def test_connect():
     print("connected")
     print(request.sid)
+    if app.uithread == None:
+        app.uithread = socketio.start_background_task(
+            app.UIProcessor.start, current_app._get_current_object()
+        )
+        app.uithread.start()
+
     socketio.emit("my response", {"data": "Connected", "count": 0})
 
 @socketio.on("disconnect", namespace="/WebMCP")
@@ -78,9 +81,13 @@ def default_error_handler(e):
     print(request.event["message"])  # "my error event"
     print(request.event["args"])  # (data,)1
 
-
-if __name__ == "__main__":
+def run_server():
     app.debug = False
     app.config["SECRET_KEY"] = "secret!"
     socketio.run(app, use_reloader=False, host="0.0.0.0", port=5001)
     # socketio.run(app, host='0.0.0.0')
+
+if __name__ == "__main__":
+    socketio.start_background_task(run_server)
+    while True:
+        time.sleep(1)

@@ -2,6 +2,7 @@ from DataStructures.makesmithInitFuncs import MakesmithInitFuncs
 import docker
 from os import environ
 from pathlib import Path
+import threading
 
 class Actions(MakesmithInitFuncs):
 
@@ -32,6 +33,9 @@ class Actions(MakesmithInitFuncs):
                 self.data.container = self.data.docker.containers.run(image="madgrizzle/webcontrol", ports={5000:5000}, volumes={self.hosthome+'/.WebControl':{'bind':'/root/.WebControl','mode':'rw'}}, privileged=True, detach=True)
                 self.data.ui_queue.put("Started WebControl: "+str(self.data.container.short_id))
                 print("Started WebControl:"+str(self.data.container.short_id))
+                th = threading.Thread(target=self.data.watchdog.initialize)
+                th.daemon = True
+                th.start()
             return True
         except Exception as e:
             self.data.ui_queue.put(e)

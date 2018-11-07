@@ -50,14 +50,14 @@
           socket.on('webControlResponsivenessStatus', function(msg){
             msg = JSON.parse(msg);
             console.log(msg.status);
-            if (msg.status=="nonResponsive"){
+            if (msg.status=="nonresponsive"){
               $("#webControlResponsivenessStatus").text("Nonresponsive");
-              $("#webControlResponsivenessStatusStatus").removeClass('btn-success').addClass('btn-outline-danger');
+              $("#webControlResponsivenessStatus").removeClass('btn-success').addClass('btn-outline-danger');
             }
             else
             {
-              $("#webControlStatus").text("Responsive");
-              $("#webControlStatus").removeClass('btn-outline-danger').addClass('btn-success');
+              $("#webControlResponsivenessStatus").text("Responsive");
+              $("#webControlResponsivenessStatus").removeClass('btn-outline-danger').addClass('btn-success');
             }
           });
  

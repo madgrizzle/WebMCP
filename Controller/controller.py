@@ -2,7 +2,7 @@ from DataStructures.makesmithInitFuncs import MakesmithInitFuncs
 from Actions.actions import Actions
 from DataStructures.logger import Logger
 from DataStructures.loggingQueue import LoggingQueue
-from Background.Watchdog import WatchDog
+from Background.watchDog import WatchDog
 from Config.config import Config
 import queue
 

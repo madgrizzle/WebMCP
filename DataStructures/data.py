@@ -17,7 +17,7 @@ class Data:
 
     clients = []
     version = "1.23"
-    checkedIn = -99999
+    checkedIn = False
     docker = None
 
 
