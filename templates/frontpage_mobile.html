@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block header %}
+<link rel="stylesheet" href="{{ url_for('static',filename='styles/frontpage.css') }}" crossorigin="anonymous">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+{% endblock %}
+
+{% block javascript %}
+  <script src="{{ url_for('static',filename='scripts/feather.min.js') }}" crossorigin="anonymous"></script>
+  <script> feather.replace() </script>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid h-100">
+  <div class = "row">
+    <div class="col">
+      <div class = "row">
+        <div class="col">
+           <button id="clientStatus" class="btn btn-outline-danger my-2 my-sm-0" type="button">Not Connected</button>
+           <button id="webControlStatus" class="btn btn-outline-danger my-2 my-sm-0" type="button">Not Running</button>
+           <button id="webControlResponsivenessStatus" class="btn btn-outline-danger my-2 my-sm-0" type="button">Not Responsive</button>
+        </div>
+      </div>
+      <div class = "row">      
+        <button type="button" class="btn btn-secondary btn-block" onclick="action('startWebControl')">Start WebControl</button>
+        <button type="button" class="btn btn-secondary btn-block" onclick="action('stopWebControl')">Stop WebControl</button>
+        <button type="button" class="btn btn-secondary btn-block" onclick="action('updateWebControl')">Update WebControl</button>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+       <div class="row" id='uiMessage'>
+       </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
