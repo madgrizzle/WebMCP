@@ -17,6 +17,7 @@ from Controller.controller import Controller
 import docker
 from os import listdir
 from os.path import isfile, join
+#import socket
 
 app.data = Data()
 app.data.docker = docker.from_env()
@@ -24,6 +25,9 @@ app.data.container = None
 app.Controller = Controller()
 app.Controller.setUpData(app.data)
 app.UIProcessor = UIProcessor()
+
+#app.host = [(s.connect(('8.8.8.8', 53)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]
+
 
 def run_schedule():
     while 1:
