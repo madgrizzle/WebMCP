@@ -1,0 +1,16 @@
+[Unit]
+Description=WebMCP
+Requires=docker.service
+After=docker.service
+
+[Service]
+# Uncomment to have systemd automatically restart this process if it fails
+#Restart=always
+
+# In case we didn't shut down properly, try to remove any container with the same name
+ExecStartPre=-/usr/bin/docker rm -f webmcp
+ExecStart=/usr/bin/docker run --name webmcp --network="host" -v /home/pi/.WebControl:/root/.WebControl -v /var/run/docker.sock:/var/run/docker.sock -p 5001:5001 -e HOST_HOME=/home/pi --privileged madgrizzle/webmcp
+ExecStop=/usr/bin/docker stop -t 2 webmcp
+
+[Install]
+WantedBy=default.target
