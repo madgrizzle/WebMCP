@@ -23,13 +23,7 @@ class UIProcessor:
                     #print(message)
                     if message != "":
                       if message[0:8] == "Message:":
-                        if message.find("adjust Z-Axis") != -1:
-                            socketio.emit(
-                                "requestedSetting",
-                                {"setting": "pauseButtonSetting", "value": "Resume"},
-                                namespace="/WebMCP",
-                            )
-                        self.activateModal("Notification:", message[9:])
+                        socketio.emit("webcontrolMessage", {"data":message[8:]}, namespace="/WebMCP")
                       elif message[0:7] == "Action:":
                         if message.find("setAsPause") != -1:
                             socketio.emit(

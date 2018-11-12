@@ -12,6 +12,12 @@ class Actions(MakesmithInitFuncs):
         self.home = str(Path.home())
         self.hosthome =  environ.get('HOST_HOME')
 
+    def testConnect(self):
+        th = threading.Thread(target=self.data.watchdog.initialize)
+        th.daemon = True
+        th.start()
+        return True
+
     def processAction(self, msg):
         if msg["data"]["command"] == "startWebControl":
             if not self.startWebControl():
@@ -22,6 +28,9 @@ class Actions(MakesmithInitFuncs):
                 self.data.ui_queue.put("Message: Error with stopping WebControl.")
         elif msg["data"]["command"] == "updateWebControl":
             if not self.updateWebControl():
+                self.data.ui_queue.put("Message: Error with updatingWebControl.")
+        elif msg["data"]["command"] == "testConnect":
+            if not self.testConnect():
                 self.data.ui_queue.put("Message: Error with updatingWebControl.")
 
     def startWebControl(self):
@@ -68,6 +77,7 @@ class Actions(MakesmithInitFuncs):
             image = self.data.docker.images.pull("madgrizzle/webcontrol","latest")
             self.data.ui_queue.put("Pulled WebControl:"+str(image.short_id))
             print("Pulled WebControl:"+str(image.short_id))
+            self.data.ui_queue.put("Updated WebControl")
             return True
         except Exception as e:
             self.data.ui_queue.put(e)

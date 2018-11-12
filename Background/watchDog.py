@@ -18,6 +18,8 @@ class WatchDogNamespace(BaseNamespace, MakesmithInitFuncs):
     def on_checkIn(self, *args):
         self.data.checkedIn = time.time()
 
+    def on_webcontrolMessage(self, *args):
+       self.data.ui_queue.put("Message:"+args[0]["data"])
 
 class WatchDog(MakesmithInitFuncs):
 
@@ -38,7 +40,8 @@ class WatchDog(MakesmithInitFuncs):
         self.namespace.on('connect', self.on_connect)
         self.namespace.on('disconnect', self.on_disconnect)
         self.namespace.on('error', self.on_error)
-        self.namespace.on('connect_error', self.on_connect_error())
+        self.namespace.on('connect_error', self.on_connect_error)
+
         print("Scheduling checkins")
         schedule.every(5).seconds.do(self.requestCheckIn)
         print("Threading monitor of checkins")
@@ -52,6 +55,16 @@ class WatchDog(MakesmithInitFuncs):
         self.th1.daemon = True
         self.th1.start()
         print("Threaded")
+
+        print("Threading socketio wait")
+        self.th2 = threading.Thread(target=self._receive_events_thread)
+        self.th2.daemon = True
+        self.th2.start()
+        print("Threaded")
+
+
+    def _receive_events_thread(self):
+        self.client.wait()
 
 
     def monitorContainer(self):
@@ -72,7 +85,6 @@ class WatchDog(MakesmithInitFuncs):
     def requestCheckIn(self):
         try:
             self.namespace.emit('checkInRequested')
-            self.client.wait(seconds=1)
         except ConnectionError:
             print('The server is down. Try again later.')
 
@@ -80,7 +92,7 @@ class WatchDog(MakesmithInitFuncs):
         while True:
             try:
                 t = time.time()-self.data.checkedIn
-                if t > 5:
+                if t > 7:
                     status = "nonresponsive"
                 else:
                     status = "responsive"
@@ -89,7 +101,7 @@ class WatchDog(MakesmithInitFuncs):
             except Exception as e:
                 print(e)
 
-            time.sleep(5)
+            time.sleep(2)
 
     def on_error(self, *args):
         print("wd:error")

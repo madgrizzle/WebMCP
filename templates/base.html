@@ -11,6 +11,7 @@
   <script type="text/javascript" charset="utf-8">
       var socket
       var uiMessages = [];
+      var webcontrolMessages = [];
       $(document).ready(function(){
           namespace = '/WebMCP'; // change to an empty string to use the global namespace
 
@@ -72,6 +73,18 @@
                 $('#uiMessage').append(message+"<br>");
               });
           });
+
+          socket.on('webcontrolMessage', function(msg){
+              console.log(msg)
+              if (webcontrolMessages.length >100)
+                webcontrolMessages.shift();
+              webcontrolMessages.push(msg.data);
+              $('#webcontrolMessage').html('');
+              webcontrolMessages.forEach(function(message){
+                $('#webcontrolMessage').append(message+"<br>");
+              });
+          });
+
 
       });
       function action(command, arg, arg1){
