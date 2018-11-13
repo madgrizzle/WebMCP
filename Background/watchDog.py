@@ -9,6 +9,8 @@ import threading
 
 class WatchDogNamespace(BaseNamespace, MakesmithInitFuncs):
 
+    data = None
+
     def on_connect(self, *args):
         print("connected")
 
@@ -19,7 +21,8 @@ class WatchDogNamespace(BaseNamespace, MakesmithInitFuncs):
         self.data.checkedIn = time.time()
 
     def on_webcontrolMessage(self, *args):
-       self.data.ui_queue.put("Message:"+args[0]["data"])
+        if self.data is not None:
+            self.data.ui_queue.put("Message:"+args[0]["data"])
 
 class WatchDog(MakesmithInitFuncs):
 
@@ -32,15 +35,13 @@ class WatchDog(MakesmithInitFuncs):
     def initialize(self):
         print("Initializing WatchDog")
         self.client = socketio_client('192.168.1.69',  5000)
-        print("1")
         self.namespace = self.client.define(WatchDogNamespace, '/WebMCP')
-        print("2")
         self.namespace.setUpData(self.data)
-        print("3")
         self.namespace.on('connect', self.on_connect)
         self.namespace.on('disconnect', self.on_disconnect)
         self.namespace.on('error', self.on_error)
         self.namespace.on('connect_error', self.on_connect_error)
+        #self.namespace.on('webcontrolMessage', self.on_webcontrolMessage)
 
         print("Scheduling checkins")
         schedule.every(5).seconds.do(self.requestCheckIn)
@@ -116,5 +117,7 @@ class WatchDog(MakesmithInitFuncs):
     def on_disconnect(self, *args):
         print("wd:disconnect")
 
+    #def on_webcontrolMessage(self, *args):
+    #   self.data.ui_queue.put("Message:"+args[0]["data"])
 
 
