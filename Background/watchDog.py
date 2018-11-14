@@ -34,7 +34,7 @@ class WatchDog(MakesmithInitFuncs):
 
     def initialize(self):
         print("Initializing WatchDog")
-        self.client = socketio_client('192.168.1.69',  5000)
+        self.client = socketio_client('127.0.0.1',  5000)
         self.namespace = self.client.define(WatchDogNamespace, '/WebMCP')
         self.namespace.setUpData(self.data)
         self.namespace.on('connect', self.on_connect)
