@@ -5,7 +5,7 @@ import schedule
 import time
 import json
 import threading
-
+import docker
 
 class WatchDogNamespace(BaseNamespace, MakesmithInitFuncs):
 
@@ -31,6 +31,10 @@ class WatchDog(MakesmithInitFuncs):
     namespace = None
     th = None
     th1 = None
+
+    def checkForRunningContainer(self):
+        list = self.data.docker.containers.list()
+        print(list)
 
     def initialize(self):
         print("Initializing WatchDog")

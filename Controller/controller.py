@@ -44,3 +44,5 @@ class Controller(MakesmithInitFuncs):
         self.logger.setUpData(data)
         self.config.setUpData(data)
         self.watchdog.setUpData(data)
+
+        self.watchdog.checkForRunningContainer()

@@ -34,9 +34,6 @@ class Actions(MakesmithInitFuncs):
         elif msg["data"]["command"] == "testConnect":
             if not self.testConnect():
                 self.data.ui_queue.put("Message: Error with updatingWebControl.")
-        elif msg["data"]["command"] == "buildAndUploadFirmware":
-            if not self.uploadFirmware():
-                self.data.ui_queue.put("Message: Error with building and uploading firmware.")
 
     def startWebControl(self):
         try:
@@ -89,20 +86,4 @@ class Actions(MakesmithInitFuncs):
             print(e)
             return False
 
-
-    def uploadFirmware(self):
-        cmd = 'C:/Users/John/.WebControl/Firmware/avrdude -c avrispmkII -p atmega2560 -U eeprom:w:"C:/Users/John/.WebControl/Firmware/cnc_ctrl_v1.ino.eep"'
-        try:
-            os.system('"'+cmd+'"')
-        except Exception as e:
-            print(e)
-        print("eeprom uploaded")
-        cmd = 'C:/Users/John/.WebControl/Firmware/avrdude -v -c avrispmkII -P com5 -b 115200 -p atmega2560 -U flash:w:"\\Users\\John\\.WebControl\\Firmware\\cnc_ctrl_v1.ino.hex"'
-        try:
-            os.system('"'+cmd+'"')
-        except Exception as e:
-            print(e)
-        print("firmware uploaded")
-
-        return True
 
