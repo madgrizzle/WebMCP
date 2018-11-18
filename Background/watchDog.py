@@ -22,7 +22,12 @@ class WatchDogNamespace(BaseNamespace, MakesmithInitFuncs):
 
     def on_webcontrolMessage(self, *args):
         if self.data is not None:
-            self.data.ui_queue.put("Message:"+args[0]["data"])
+            try:
+                self.data.ui_queue.put("Message:"+args[0]["data"])
+            except Exception as e:
+                print(e)
+                print(args[0]["data"])
+
 
 class WatchDog(MakesmithInitFuncs):
 
