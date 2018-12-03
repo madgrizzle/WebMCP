@@ -9,6 +9,7 @@ import threading
 class Actions(MakesmithInitFuncs):
 
     home = ""
+    th = None
 
     def __init__(self):
         self.home = str(Path.home())
@@ -44,9 +45,12 @@ class Actions(MakesmithInitFuncs):
                 self.data.container = self.data.docker.containers.run(image="madgrizzle/webcontrol", ports={5000:5000}, volumes={self.hosthome+'/.WebControl':{'bind':'/root/.WebControl','mode':'rw'}}, privileged=True, detach=True)
                 self.data.ui_queue.put("Started WebControl: "+str(self.data.container.short_id))
                 print("Started WebControl:"+str(self.data.container.short_id))
-                th = threading.Thread(target=self.data.watchdog.initialize)
-                th.daemon = True
-                th.start()
+                if self.th is not None:
+                    self.th.stop()
+                    self.th.join()
+                self.th = threading.Thread(target=self.data.watchdog.initialize)
+                self.th.daemon = True
+                self.th.start()
             return True
         except Exception as e:
             self.data.ui_queue.put(e)
@@ -59,6 +63,10 @@ class Actions(MakesmithInitFuncs):
             print("Stop WebControl:"+str(self.data.container.short_id))
             self.data.container.stop()
             self.data.container = None
+            if self.th is not None:
+                self.th.stop()
+                self.th.join()
+                self.th = None
             self.data.ui_queue.put("Stopped WebControl")
             print("Stopped WebControl")
             return True
