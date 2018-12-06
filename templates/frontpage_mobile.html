@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block header %}
-<link rel="stylesheet" href="{{ url_for('static',filename='styles/frontpage.css') }}" crossorigin="anonymous">
+<link rel="stylesheet" href="{{ url_for('static',filename='styles/frontpage.css', version='10262019a') }}" crossorigin="anonymous">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 {% endblock %}
 
@@ -13,34 +13,45 @@
 {% block content %}
 <div class="container-fluid h-100">
   <div class = "row">
+    <div class="col-4">
+        <h5>WebMCP</h5>
+        <button id="clientStatus" class="btn btn-sm btn-outline-danger my-2 my-sm-0" type="button">Not Connected</button>
+    </div>
+    <div class="col-8">
+        <h5>WebControl</h5>
+       <button id="webControlStatus" class="btn btn-sm btn-outline-danger my-2 my-sm-0" type="button">Not Running</button>
+       <button id="webControlResponsivenessStatus" class="btn btn-sm btn-outline-danger my-2 my-sm-0" type="button">Not Responsive</button>
+    </div>
+  </div>  
+  <div class="row my-sm-0">
     <div class="col">
-      <div class = "row">
-        <div class="col">
-           <button id="clientStatus" class="btn btn-outline-danger my-2 my-sm-0" type="button">Not Connected</button>
-           <button id="webControlStatus" class="btn btn-outline-danger my-2 my-sm-0" type="button">Not Running</button>
-           <button id="webControlResponsivenessStatus" class="btn btn-outline-danger my-2 my-sm-0" type="button">Not Responsive</button>
+        <h5>WebControl Actions:</h5>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-4">
+      <button type="button" class="btn btn-lg btn-block btn-success my-2 my-sm-0" onclick="action('startWebControl')">Start</button>
+   </div>
+   <div class="col-4">
+      <button type="button" class="btn btn-lg btn-block btn-danger my-2 my-sm-0" onclick="action('stopWebControl')">Stop</button>
+   </div>
+   <div class="col-4">
+      <button type="button" class="btn btn-lg btn-block btn-info my-2 my-sm-0" onclick="action('updateWebControl')">Update</button>
+   </div>
+  </div>
+  <div class="row">
+    <div class="col">
+        <h5>WebMCP Messages</h5>
+        <div class="row" id='uiMessage'>
         </div>
-      </div>
-      <div class = "row">      
-        <button type="button" class="btn btn-secondary btn-block" onclick="action('startWebControl')">Start WebControl</button>
-        <button type="button" class="btn btn-secondary btn-block" onclick="action('stopWebControl')">Stop WebControl</button>
-        <button type="button" class="btn btn-secondary btn-block" onclick="action('updateWebControl')">Update WebControl</button>
-      </div>
     </div>
   </div>
   <div class="row">
     <div class="col">
-       <h4>WebMCP Messages</h4>
-       <div class="row" id='uiMessage'>
-       </div>
+        <h5>WebControl Messages</h5>
+        <div id="webcontrolMessage">
+        </div>
     </div>
   </div>
-  <div class="row">
-    <div class="col">
-      <h4>WebControl Messages</h4>
-      <div id="webcontrolMessage">
-      </div>
-    </div>
-  </div
 </div>
 {% endblock %}

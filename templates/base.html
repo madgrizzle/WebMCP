@@ -65,7 +65,7 @@
  
           socket.on('uiMessage', function(msg){
               console.log(msg)
-              if (uiMessages.length >100)
+              if (uiMessages.length >3)
                 uiMessages.shift();
               uiMessages.push(msg.data);
               $('#uiMessage').html('');
