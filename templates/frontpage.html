@@ -1,61 +1,49 @@
 {% extends 'base.html' %}
 
-{% block header %}
-<link rel="stylesheet" href="{{ url_for('static',filename='styles/frontpage.css', version='10262020a') }}" crossorigin="anonymous">
-{% endblock %}
-
 {% block javascript %}
   <script src="{{ url_for('static',filename='scripts/feather.min.js') }}" crossorigin="anonymous"></script>
+  <script src="{{ url_for('static',filename='scripts/frontpage.js') }}" crossorigin="anonymous"></script>
   <script> feather.replace() </script>
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-  <div class = "row">
-    <div class="col">
-      <div class = "row my-2">
-       <button id="clientStatus" class="btn btn-outline-danger my-2 my-sm-0" type="button">Not Connected</button>
-       <button id="webControlStatus" class="btn btn-outline-danger my-2 my-sm-0" type="button">Not Running</button>
-       <button id="webControlResponsivenessStatus" class="btn btn-outline-danger my-2 my-sm-0" type="button">Not Responsive</button>
+  <div class = "row my-2">
+      <div class="col">
+           <button id="clientStatus" class="btn btn-outline-danger my-2 my-sm-0" type="button">Not Connected</button>
+           <button id="webControlStatus" class="btn btn-outline-danger my-2 my-sm-0" type="button">Not Running</button>
+           <button id="webControlResponsivenessStatus" class="btn btn-outline-danger my-2 my-sm-0" type="button">Not Responsive</button>
       </div>
-      <div class = "row my-2">      
+  </div>
+  <div class = "row my-2">
+      <div class="col">
         <button type="button" class="btn btn-success my-2 my-sm-0" onclick="action('startWebControl')">Start WebControl</button>
         <button type="button" class="btn btn-danger my-2 my-sm-0" onclick="action('stopWebControl')">Stop WebControl</button>
         <button type="button" class="btn btn-info my-2 my-sm-0" onclick="action('updateWebControl')">Update WebControl</button>
-        <!--<button type="button" class="btn btn-secondary btn-block" onclick="action('testConnect')">make connection</button>-->
       </div>
-    </div>
   </div>
 
-  <div class = "row">
+  <div class = "row h-100">
     <div class="col-6">
-        <div class = "container d-flex flex-column">
-            <div class="row">
-                <div class="col">
-                    <div class = "card flex-col">
-                        <div class="card-body">
-                            <div class="card-title"><h3>WebControl Messages</h3></div>
-                            <div class="scrollText card-text flex-grow-1" id='webcontrolMessage'></div>
-                        </div>
-                    </div> 
+        <div class="d-flex h-100">
+            <div class = "card flex-grow-1">
+                <div class="card-body d-flex flex-column">
+                    <div class="card-title"><h3>WebControl Messages</h3></div>
+                    <div class="scrollText card-text flex-grow-1" id='webcontrolMessage'></div>
                 </div>
             </div>
         </div>
     </div>
     <div class="col-6">
-        <div class = "container d-flex flex-column">
-            <div class="row">
-                <div class="col">
-                    <div class = "card flex-col">
-                        <div class="card-body">
-                            <div class="card-title"><h3>WebMCP Messages</h3></div>
-                            <div class="scrollText card-text flex-grow-1" id='uiMessage'></div>
-                        </div>
-                    </div> 
+        <div class="d-flex h-100">
+            <div class = "card flex-grow-1">
+                <div class="card-body d-flex flex-column">
+                    <div class="card-title"><h3>WebMCP Messages</h3></div>
+                    <div class="scrollText card-text flex-grow-1" id='uiMessage'></div>
                 </div>
             </div>
         </div>
-    </div>    
+    </div>
   </div>
-</div>
 {% endblock %}
+
+

@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid h-100">
+<div>
   <div class = "row">
     <div class="col-4">
         <h5>WebMCP</h5>
@@ -41,15 +41,27 @@
   </div>
   <div class="row">
     <div class="col">
-        <h5>WebMCP Messages</h5>
-        <div class="row" id='uiMessage'>
+        <div class="card">
+            <div class="card-body">
+                <div class="card-title">
+                    <h5>WebMCP Messages</h5>
+                </div>
+                <div class="card-text scrollText"  style="height:100px" id='uiMessage'>
+                </div>
+            </div>
         </div>
     </div>
   </div>
   <div class="row">
     <div class="col">
-        <h5>WebControl Messages</h5>
-        <div id="webcontrolMessage">
+        <div class="card">
+            <div class="card-body">
+                <div class="card-title">
+                    <h5>WebControl Messages</h5>
+                </div>
+                <div class="card-text scrollText"  style="height:200px" id='webControlMessage'>
+                </div>
+            </div>
         </div>
     </div>
   </div>
