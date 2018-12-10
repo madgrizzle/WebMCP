@@ -36,6 +36,7 @@ class WatchDog(MakesmithInitFuncs):
     namespace = None
     th = None
     th1 = None
+    stopped = False
 
     def checkForRunningContainer(self):
         list = self.data.docker.containers.list()
@@ -52,6 +53,7 @@ class WatchDog(MakesmithInitFuncs):
         self.namespace.on('connect_error', self.on_connect_error)
         #self.namespace.on('webcontrolMessage', self.on_webcontrolMessage)
 
+        self.stopped = False
         print("Scheduling checkins")
         schedule.every(5).seconds.do(self.requestCheckIn)
         print("Threading monitor of checkins")
@@ -74,9 +76,16 @@ class WatchDog(MakesmithInitFuncs):
 
 
     def _receive_events_thread(self):
-        self.client.wait()
+        while True:
+            self.client.wait(seconds = 1)
+            if self.stopped:
+                return
+            time.sleep(0.01)
 
 
+    def stop(self):
+        self.stopped = True
+        
     def monitorContainer(self):
         while True:
             try:
@@ -90,6 +99,10 @@ class WatchDog(MakesmithInitFuncs):
                     self.data.ui_queue.put("Action: webControlResponsivenessStatus_" + json.dumps({"status": "nonresponsive"}))
             except ConnectionError:
                 print('The server is down. Try again later.')
+
+            if self.stopped:
+                return
+
             time.sleep(5)
 
     def requestCheckIn(self):
@@ -110,6 +123,9 @@ class WatchDog(MakesmithInitFuncs):
 
             except Exception as e:
                 print(e)
+
+            if self.stopped:
+                return
 
             time.sleep(2)
 

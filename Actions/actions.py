@@ -46,8 +46,7 @@ class Actions(MakesmithInitFuncs):
                 self.data.ui_queue.put("Started WebControl: "+str(self.data.container.short_id))
                 print("Started WebControl:"+str(self.data.container.short_id))
                 if self.th is not None:
-                    self.th.stop()
-                    self.th.join()
+                    self.data.watchdog.stop()
                 self.th = threading.Thread(target=self.data.watchdog.initialize)
                 self.th.daemon = True
                 self.th.start()
@@ -64,7 +63,7 @@ class Actions(MakesmithInitFuncs):
             self.data.container.stop()
             self.data.container = None
             if self.th is not None:
-                self.th.stop()
+                self.data.watchdog.stop()
                 self.th.join()
                 self.th = None
             self.data.ui_queue.put("Stopped WebControl")
