@@ -4,14 +4,21 @@
   <script src="{{ url_for('static',filename='scripts/feather.min.js') }}" crossorigin="anonymous"></script>
   <script src="{{ url_for('static',filename='scripts/frontpage.js') }}" crossorigin="anonymous"></script>
   <script> feather.replace() </script>
+  <script>
+    function openTab(){
+        var ip=location.host;
+        var parts = ip.split(":");
+        window.open("http://"+parts[0]+":5000","_blank");
+    }
+  </script>
 {% endblock %}
 
 {% block content %}
   <div class = "row my-2">
       <div class="col">
-           <button id="clientStatus" class="btn btn-outline-danger my-2 my-sm-0" type="button">Not Connected</button>
-           <button id="webControlStatus" class="btn btn-outline-danger my-2 my-sm-0" type="button">Not Running</button>
-           <button id="webControlResponsivenessStatus" class="btn btn-outline-danger my-2 my-sm-0" type="button">Not Responsive</button>
+           <div id="clientStatus" class="alert alert-danger">Not Connected</div>
+           <div id="webControlStatus" class="alert alert-danger">Not Running</div>
+           <div id="webControlResponsivenessStatus" class="alert alert-danger">Nonresponsive</div>
       </div>
   </div>
   <div class = "row my-2">
@@ -19,6 +26,7 @@
         <button type="button" class="btn btn-success my-2 my-sm-0" onclick="action('startWebControl')">Start WebControl</button>
         <button type="button" class="btn btn-danger my-2 my-sm-0" onclick="action('stopWebControl')">Stop WebControl</button>
         <button type="button" class="btn btn-info my-2 my-sm-0" onclick="action('updateWebControl')">Update WebControl</button>
+        <button type="button" class="btn btn-info my-2 my-sm-0" onclick="openTab()">Go to WebControl</button>
       </div>
   </div>
 

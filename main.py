@@ -14,6 +14,7 @@ from flask_mobility.decorators import mobile_template
 from Background.UIProcessor import UIProcessor
 from DataStructures.data import Data
 from Controller.controller import Controller
+from WebPageProcessor.webPageProcessor import WebPageProcessor
 import docker
 from os import listdir
 from os.path import isfile, join
@@ -25,6 +26,8 @@ app.data.container = None
 app.Controller = Controller()
 app.Controller.setUpData(app.data)
 app.UIProcessor = UIProcessor()
+app.webPageProcessor = WebPageProcessor(app.data)
+app.data.actions.autoStart()
 
 #app.host = [(s.connect(('8.8.8.8', 53)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1]
 
@@ -49,6 +52,17 @@ def index(template):
         return render_template("frontpage_mobile.html")
     else:
         return render_template("frontpage.html")
+
+
+@app.route("/webMCPSettings", methods=["POST"])
+def maslowSettings():
+    if request.method == "POST":
+        result = request.form
+        app.data.config.updateSettings("WebMCP Settings", result)
+        message = {"status": 200}
+        resp = jsonify(message)
+        resp.status_code = 200
+        return resp
 
 
 @socketio.on("my event", namespace="/WebMCP")
@@ -79,6 +93,19 @@ def command(msg):
 def checkIn():
     print("received checkIn")
     app.data.checkedIn = time.time()
+    
+
+@socketio.on("requestPage", namespace="/WebMCP")
+def requestPage(msg):
+    print(msg)
+    try:
+        page, title, isStatic, modalSize, modalType, resume = app.webPageProcessor.createWebPage(msg["data"]["page"],msg["data"]["isMobile"], msg["data"]["args"])
+        data = json.dumps({"title": title, "message": page, "isStatic": isStatic, "modalSize": modalSize, "modalType": modalType, "resume":resume})
+        socketio.emit("message", {"command": "activateModal", "data": data, "dataFormat": "json"},
+            namespace="/WebMCP",
+        )
+    except Exception as e:
+        print(e)
 
 @socketio.on_error_default
 def default_error_handler(e):

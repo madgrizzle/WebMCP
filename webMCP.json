@@ -1,13 +1,17 @@
 {
     "WebMCP Settings": [
         {
-            "default": "",
-            "desc": "Select the COM port to connect to machine\ndefault setting: ",
-            "key": "COMport",
+            "default": "Yes",
+            "desc": "Automatically start webcontrol\ndefault setting: ",
+            "key": "autostart",
+            "options": [
+                "Yes",
+                "No"
+            ],
             "section": "Maslow Settings",
-            "title": "Serial Connection",
-            "type": "string",
-            "value": "COM5"
+            "title": "AutoStart Webcontrol",
+            "type": "options",
+            "value": "Yes"
         }
     ]
 }

@@ -1,7 +1,9 @@
 
 from DataStructures.makesmithInitFuncs import MakesmithInitFuncs
 from socketIO_client import SocketIO as socketio_client, BaseNamespace
+from Background.gracefulKiller import GracefulKiller
 import schedule
+import Background.gracefulKiller
 import time
 import json
 import threading
@@ -37,6 +39,7 @@ class WatchDog(MakesmithInitFuncs):
     th = None
     th1 = None
     stopped = False
+    killer = GracefulKiller()
 
     def checkForRunningContainer(self):
         list = self.data.docker.containers.list()
@@ -73,6 +76,7 @@ class WatchDog(MakesmithInitFuncs):
         self.th2.daemon = True
         self.th2.start()
         print("Threaded")
+
 
 
     def _receive_events_thread(self):
@@ -113,6 +117,8 @@ class WatchDog(MakesmithInitFuncs):
 
     def monitorCheckIn(self):
         while True:
+            if kill.kill_now:
+                print("kill app")
             try:
                 t = time.time()-self.data.checkedIn
                 if t > 7:
@@ -128,6 +134,7 @@ class WatchDog(MakesmithInitFuncs):
                 return
 
             time.sleep(2)
+
 
     def on_error(self, *args):
         print("wd:error")

@@ -5,3 +5,8 @@ $(document).ready(function(){
    webmcpMessage.scrollTop = webmcpMessage.scrollHeight;
    */
 });
+
+function requestPage(page, args=""){
+  console.log("requesting page..")
+  socket.emit('requestPage',{data:{page:page, isMobile:isMobile, args:args}});
+}

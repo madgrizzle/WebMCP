@@ -25,29 +25,25 @@
           socket.on('connect', function(msg) {
               socket.emit('my event', {data: 'I\'m connected!'});
               $("#clientStatus").text("Connected");
-              $("#clientStatus").removeClass('btn-outline-danger').addClass('btn-success');
+              $("#clientStatus").removeClass('alert-danger').addClass('alert-success');
           });
 
           socket.on('disconnect', function(msg) {
               $("#clientStatus").text("Not Connected");
-              $("#clientStatus").removeClass('btn-success').addClass('btn-outline-danger');
+              $("#clientStatus").removeClass('alert-success').addClass('alert-danger');
           });
           
-          socket.on('message', function(msg){
-              //console.log(msg);
-              $('#test').html('<p>' + msg + '</p>');
-          });
 
           socket.on('webControlStatus', function(msg){
             msg = JSON.parse(msg);
             if (msg.status=="notRunning"){
               $("#webControlStatus").text("Not Running");
-              $("#webControlStatus").removeClass('btn-success').addClass('btn-outline-danger');
+              $("#webControlStatus").removeClass('alert-success').addClass('alert-danger');
             }
             else
             {
               $("#webControlStatus").text("Running");
-              $("#webControlStatus").removeClass('btn-outline-danger').addClass('btn-success');
+              $("#webControlStatus").removeClass('alert-danger').addClass('alert-success');
             }
           });
 
@@ -55,12 +51,12 @@
             msg = JSON.parse(msg);
             if (msg.status=="nonresponsive"){
               $("#webControlResponsivenessStatus").text("Nonresponsive");
-              $("#webControlResponsivenessStatus").removeClass('btn-success').addClass('btn-outline-danger');
+              $("#webControlResponsivenessStatus").removeClass('alert-success').addClass('alert-danger');
             }
             else
             {
               $("#webControlResponsivenessStatus").text("Responsive");
-              $("#webControlResponsivenessStatus").removeClass('btn-outline-danger').addClass('btn-success');
+              $("#webControlResponsivenessStatus").removeClass('alert-danger').addClass('alert-success');
             }
           });
  
@@ -87,6 +83,32 @@
 
               webcontrolMessage.scrollTop = webcontrolMessage.scrollHeight;
           });
+          socket.on('message', function(msg){
+          //#console.log(msg.dataFormat);
+          if (msg.dataFormat=='json')
+            data = JSON.parse(msg.data);
+          else
+            data = msg.data;
+          switch(msg.command) {
+            case 'activateModal':
+                //completed
+                processActivateModal(data);
+                break;
+            case 'closeModals':
+                //completed
+                closeModals(data);
+                break;
+            case 'closeContentModals':
+                //completed
+                closeContentModals(data);
+                break;
+
+            default:
+                console.log("!!!!!!");
+                console.log("uncaught action:"+msg.command);
+                console.log("!!!!!!");
+          }
+      });
 
 
       });
@@ -94,6 +116,91 @@
         console.log("action="+command);
         socket.emit('action',{data:{command:command,arg:arg, arg1:arg1}});
       }
+
+      $("#contentModal").on('hidden.bs.modal', function(e){
+          var name = $('#contentModal').data('name');
+          console.log("closing modal:"+name);
+          socket.emit('contentModalClosed', {data:name});
+      });
+      
+      
+      
+        function processActivateModal(data){
+            var $modal, $modalTitle, $modalText
+            if (data.modalType == "content"){
+              $modal = $('#contentModal');
+              $modalDialog = $('#contentDialog');
+              $modalTitle = $('#contentModalTitle');
+              $modalText = $('#contentModalText');
+              if (data.resume=='footerSubmit'){
+                $('#footerSubmit').show();
+              } else {
+                $('#footerSubmit').hide();
+              }
+            }
+            else{
+              $modal = $('#notificationModal');
+              $modalDialog = $('#notificationDialog');
+              $modalTitle = $('#notificationModalTitle');
+              $modalText = $('#notificationModalText');
+              if (data.resume=="resume"){
+                $('#resumeButton').show();
+              } else {
+                $('#resumeButton').hide();
+              }
+              if (data.progress=="true"){
+                $('#progressBarDiv').show();
+              } else {
+                $('#progressBarDiv').hide();
+              }
+              if (data.progress=="spinner"){
+                $('#notificationCircle').show();
+              } else {
+                $('#notificationCircle').hide();
+              }
+            }
+            $modalDialog.removeClass('modal-lg');
+            $modalDialog.removeClass('modal-sm');
+            $modalDialog.removeClass('mw-100 w-75');
+            if (data.modalSize=="large"){
+              if (isMobile)
+                $modalDialog.addClass('modal-lg');
+              else
+                $modalDialog.addClass('mw-100 w-75');
+            }
+            if (data.modalSize=="medium")
+              $modalDialog.addClass('modal-lg');
+            if (data.modalSize=="small")
+              $modalDialog.addClass('modal-sm');
+            $modal.data('bs.modal',null);
+            $modal.data('name',data.title);
+
+            $modalTitle.html("<h3>"+data.title+"</h3");
+            $modalText.html("<p>"+data.message+"</p>");
+
+            if (data.isStatic==true){
+                console.log("Static Modal")
+                $modal.modal({backdrop: 'static', keyboard: false})
+            } else {
+                $modal.modal();
+            }
+            $modalText.scrollTop(0);
+        }
+
+        function closeModals(data){
+            if ($('#notificationModal').data('name') == data.title)
+            {
+              $('#notificationModal').modal('hide');
+            }
+        }
+
+        function closeContentModals(data){
+            if ($('#contentModal').data('name') == data.title)
+            {
+              $('#contentModal').modal('hide');
+            }
+        };
+
 
       var isMobile = false; //initiate as false
       if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od)|ipad|iris|kindle|Android|Silk|lge |maemo|midp|mmp|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows (ce|phone)|xda|xiino/i.test(navigator.userAgent)
@@ -122,31 +229,53 @@
     </div>
 </nav>
 <body>
-    <section class="content d-flex flex-column h-100">
-      <header>
-        {% block header %}{% endblock %}
-      </header>
-      {% block content %}{% endblock %}
-    </section>
 
-    <div class="modal" id="notificationModal" tabindex="-1" role="dialog">
-      <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 id="notificationModalTitle" class="modal-title">Modal title</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div id="notificationModalText" class="modal-body">
+<section class="content d-flex flex-column h-100">
+  <header>
+    {% block header %}{% endblock %}
+  </header>
+  {% block content %}{% endblock %}
+</section>
+
+<div class="modal" id="notificationModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 id="notificationModalTitle" class="modal-title">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div id="notificationModalText" class="modal-body">
+        <p>Modal body text goes here.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="contentModal" tabindex="-1" role="dialog">
+    <div id="contentDialog" class="modal-dialog {{modalStyle}}" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 id="contentModalTitle" class="modal-title">Modal title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div id="contentModalText">
             <p>Modal body text goes here.</p>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          </div>
+        </div>
+        <div class="modal-footer">
+          <button id="footerSubmit" type="button" class="btn btn-primary" onclick="onFooterSubmit();">Submit</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         </div>
       </div>
     </div>
-</body>
-
+</div>
+  
 {% block javascript %}{% endblock %}

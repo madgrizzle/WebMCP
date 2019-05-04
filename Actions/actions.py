@@ -36,6 +36,13 @@ class Actions(MakesmithInitFuncs):
             if not self.testConnect():
                 self.data.ui_queue.put("Message: Error with updatingWebControl.")
 
+    def autoStart(self):
+        if self.data.config.getValue("WebMCP Settings", "autostart") == "Yes":
+            print("Automatically starting WebControl")
+            self.data.ui_queue.put("Automatically Starting WebControl")
+            self.startWebControl()
+            
+
     def startWebControl(self):
         try:
             if self.data.container == None:
