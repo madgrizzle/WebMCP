@@ -8,6 +8,7 @@ import time
 import threading
 import json
 import schedule
+import sys
 
 from flask import Flask, jsonify, render_template, current_app, request, flash
 from flask_mobility.decorators import mobile_template
@@ -15,6 +16,8 @@ from Background.UIProcessor import UIProcessor
 from DataStructures.data import Data
 from Controller.controller import Controller
 from WebPageProcessor.webPageProcessor import WebPageProcessor
+from Background.gracefulKiller import GracefulKiller
+
 import docker
 from os import listdir
 from os.path import isfile, join
@@ -42,6 +45,21 @@ app.th.daemon = True
 app.th.start()
 
 app.uithread = None
+
+#def monitorKillSignal():
+#    while True:
+#       if app.killer.kill_now:
+#           print("kill app")
+#           app.data.actions.stopWebControl()
+#           print("back")
+#           return
+#       time.sleep(0.01)
+
+#app.th3 = threading.Thread(target=monitorKillSignal)
+#app.th3.daemon = True
+#app.th3.start()
+
+
 
 
 @app.route("/")
@@ -87,13 +105,30 @@ def test_disconnect():
 
 @socketio.on("action", namespace="/WebMCP")
 def command(msg):
-    app.data.actions.processAction(msg)
+    try:
+        app.data.actions.processAction(msg)
+    except Exception as e:
+        self.data.ui_queue.put(e)
+        print(e)
+
 
 @socketio.on("checkIn", namespace="/WebMCP")
 def checkIn():
     print("received checkIn")
     app.data.checkedIn = time.time()
     
+    
+@socketio.on("shutdown", namespace="/WebMCP")
+def shutdown():
+    print("shutting down")
+    app.data.actions.shutdown()
+
+@socketio.on("message", namespace="/WebMCP")
+def on_message(msg):
+    print("here")
+    print(msg)
+    print(msg["command"])
+
 
 @socketio.on("requestPage", namespace="/WebMCP")
 def requestPage(msg):
@@ -117,6 +152,7 @@ def run_server():
     app.config["SECRET_KEY"] = "secret!"
     socketio.run(app, use_reloader=False, host="0.0.0.0", port=5001)
     # socketio.run(app, host='0.0.0.0')
+
 
 if __name__ == "__main__":
     socketio.start_background_task(run_server)

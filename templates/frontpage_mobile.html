@@ -6,6 +6,7 @@
 {% endblock %}
 
 {% block javascript %}
+  <script src="{{ url_for('static',filename='scripts/frontpage.js') }}" crossorigin="anonymous"></script>
   <script src="{{ url_for('static',filename='scripts/feather.min.js') }}" crossorigin="anonymous"></script>
   <script> feather.replace() </script>
 {% endblock %}
@@ -39,6 +40,14 @@
       <button type="button" class="btn btn-lg btn-block btn-info my-2 my-sm-0" onclick="action('updateWebControl')">Update</button>
    </div>
   </div>
+  <div class="row">
+    <div class="col-4">
+      <button type="button" class="btn btn-lg btn-block btn-success my-2 my-sm-0" onclick="openTab()">Open</button>
+   </div>
+   <div class="col-4">
+      <button type="button" class="btn btn-lg btn-block btn-danger my-2 my-sm-0" onclick="action('shutdown')">Shutdown</button>
+   </div>
+
   <div class="row">
     <div class="col">
         <div class="card">

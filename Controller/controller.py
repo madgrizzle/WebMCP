@@ -1,5 +1,6 @@
 from DataStructures.makesmithInitFuncs import MakesmithInitFuncs
 from Actions.actions import Actions
+from Background.gracefulKiller import GracefulKiller
 from DataStructures.logger import Logger
 from DataStructures.loggingQueue import LoggingQueue
 from Background.watchDog import WatchDog
@@ -15,6 +16,7 @@ class Controller(MakesmithInitFuncs):
     """
 
     actions = Actions()
+    gracefulKiller = GracefulKiller()
     logger = Logger()
     config = Config()
     watchdog = WatchDog()
@@ -34,6 +36,7 @@ class Controller(MakesmithInitFuncs):
 
 
         self.data.actions = self.actions
+        self.data.gracefulKiller = self.gracefulKiller
         self.data.logger = self.logger
         self.data.config = self.config
         self.data.ui_queue = self.ui_queue
@@ -41,6 +44,7 @@ class Controller(MakesmithInitFuncs):
         self.data.watchdog = self.watchdog
 
         self.actions.setUpData(data)
+        self.gracefulKiller.setUpData(data)
         self.logger.setUpData(data)
         self.config.setUpData(data)
         self.watchdog.setUpData(data)

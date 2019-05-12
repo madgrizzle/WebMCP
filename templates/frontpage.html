@@ -4,13 +4,6 @@
   <script src="{{ url_for('static',filename='scripts/feather.min.js') }}" crossorigin="anonymous"></script>
   <script src="{{ url_for('static',filename='scripts/frontpage.js') }}" crossorigin="anonymous"></script>
   <script> feather.replace() </script>
-  <script>
-    function openTab(){
-        var ip=location.host;
-        var parts = ip.split(":");
-        window.open("http://"+parts[0]+":5000","_blank");
-    }
-  </script>
 {% endblock %}
 
 {% block content %}
@@ -27,6 +20,7 @@
         <button type="button" class="btn btn-danger my-2 my-sm-0" onclick="action('stopWebControl')">Stop WebControl</button>
         <button type="button" class="btn btn-info my-2 my-sm-0" onclick="action('updateWebControl')">Update WebControl</button>
         <button type="button" class="btn btn-info my-2 my-sm-0" onclick="openTab()">Go to WebControl</button>
+        <button type="button" class="btn btn-danger my-2 my-sm-0" onclick="action('shutdown')">Shutdown</button>
       </div>
   </div>
 

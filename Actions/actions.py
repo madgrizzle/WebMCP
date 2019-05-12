@@ -3,6 +3,7 @@ import docker
 from os import environ
 from pathlib import Path
 import os
+import sys
 
 import threading
 
@@ -35,6 +36,14 @@ class Actions(MakesmithInitFuncs):
         elif msg["data"]["command"] == "testConnect":
             if not self.testConnect():
                 self.data.ui_queue.put("Message: Error with updatingWebControl.")
+        elif msg["data"]["command"] == "shutdown":
+            try:
+                if not self.shutdown():
+                    self.data.ui_queue.put("Message: Error with shutting down.")
+            except Exception as e:
+                self.data.ui_queue.put(e)
+                print(e)
+
 
     def autoStart(self):
         if self.data.config.getValue("WebMCP Settings", "autostart") == "Yes":
@@ -42,6 +51,16 @@ class Actions(MakesmithInitFuncs):
             self.data.ui_queue.put("Automatically Starting WebControl")
             self.startWebControl()
             
+
+    def shutdown(self):
+        try:
+            response = self.stopWebControl()
+            self.data.shutdown = True
+            return True
+        except Exception as e:
+            self.data.ui_queue.put(e)
+            print(e)
+            return False
 
     def startWebControl(self):
         try:
@@ -65,17 +84,22 @@ class Actions(MakesmithInitFuncs):
 
     def stopWebControl(self):
         try:
-            self.data.ui_queue.put("Stop WebControl:"+str(self.data.container.short_id))
-            print("Stop WebControl:"+str(self.data.container.short_id))
-            self.data.container.stop()
-            self.data.container = None
-            if self.th is not None:
-                self.data.watchdog.stop()
-                self.th.join()
-                self.th = None
-            self.data.ui_queue.put("Stopped WebControl")
-            print("Stopped WebControl")
-            return True
+            if self.data.container == None:
+                print("WebControl Not Running")
+                self.data.ui_queue.put("WebControl Not Running")
+                return True
+            else:
+                self.data.ui_queue.put("Stop WebControl:"+str(self.data.container.short_id))
+                print("Stop WebControl:"+str(self.data.container.short_id))
+                self.data.container.stop()
+                self.data.container = None
+                if self.th is not None:
+                    self.data.watchdog.stop()
+                    self.th.join()
+                    self.th = None
+                self.data.ui_queue.put("Stopped WebControl")
+                print("Stopped WebControl")
+                return True
         except Exception as e:
             self.data.ui_queue.put(e)
             print(e)

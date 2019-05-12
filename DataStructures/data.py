@@ -19,6 +19,7 @@ class Data:
     version = "1.23"
     checkedIn = False
     docker = None
+    shutdown = False
 
 
 
